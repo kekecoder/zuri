@@ -43,7 +43,7 @@ class UserAuth extends Dbh
     public function getUser($username)
     {
         $conn = $this->db->connect();
-        $sql = "SELECT * FROM users WHERE full_names = '$username'";
+        $sql = "SELECT * FROM Students WHERE full_names = '$username'";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             return $result->fetch_assoc();
@@ -101,6 +101,9 @@ class UserAuth extends Dbh
 
     public function updateUser($email, $password)
     {
+        if ($this->checkEmailExists($email)) {
+            return false;
+        }
         $conn = $this->db->connect();
         $sql = "UPDATE Students SET password = '$password' WHERE email = '$email'";
         if ($conn->query($sql) === TRUE) {
@@ -161,6 +164,10 @@ class UserAuth extends Dbh
                 echo "Email already exist!!!";
                 exit;
             }
+        }
+        if (!mysqli_num_rows($result) == 1) {
+            echo "Email does not exist";
+            exit;
         }
     }
 }
